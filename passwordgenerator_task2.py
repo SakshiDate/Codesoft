@@ -5,39 +5,38 @@ alpha = "abcdefghijklmnopqrstuvwxyz"
 num = "0123456789"
 special = "@#$%&*"
 
-# pass_len=random.randint(8,13)  #without User INput
-pass_len = int(input("Enter Password Length"))
+def get_password_length():
+    while True:
+        try:
+            pass_len = int(input("Enter Password Length: "))
+            if pass_len > 0:
+                return pass_len
+            else:
+                print("Please enter a positive integer for password length.")
+        except ValueError:
+            print("Please enter a valid integer for password length.")
 
-# length of password by 50-30-20 formula
-alpha_len = pass_len//2
-num_len = math.ceil(pass_len*30/100)
-special_len = pass_len-(alpha_len+num_len)
+def generate_password(length, array, is_alpha=False):
+    password = [random.choice(array) for _ in range(length)]
+    if is_alpha:
+        password = [random.choice([char.lower(), char.upper()]) for char in password]
+    return ''.join(password)
 
+def main():
+    pass_len = get_password_length()
 
-password = []
+    alpha_len = pass_len // 2
+    num_len = math.ceil(pass_len * 30 / 100)
+    special_len = pass_len - (alpha_len + num_len)
 
+    alpha_password = generate_password(alpha_len, alpha, True)
+    num_password = generate_password(num_len, num)
+    special_password = generate_password(special_len, special)
 
-def generate_pass(length, array, is_alpha=False):
-    for i in range(length):
-        index = random.randint(0, len(array) - 1)
-        character = array[index]
-        if is_alpha:
-            case = random.randint(0, 1)
-            if case == 1:
-                character = character.upper()
-        password.append(character)
+    final_password = ''.join(random.sample(alpha_password + num_password + special_password, pass_len))
+    
+    print(final_password)
 
+if __name__ == "__main__":
+    main()
 
-# alpha password
-generate_pass(alpha_len, alpha, True)
-# numeric password
-generate_pass(num_len, num)
-# special Character password
-generate_pass(special_len, special)
-# suffle the generated password list
-random.shuffle(password)
-# convert List To string
-gen_password = ""
-for i in password:
-    gen_password = gen_password + str(i)
-print(gen_password)
