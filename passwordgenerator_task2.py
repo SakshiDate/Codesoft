@@ -1,42 +1,57 @@
+import string
 import random
-import math
+from tkinter import *
 
-alpha = "abcdefghijklmnopqrstuvwxyz"
-num = "0123456789"
-special = "@#$%&*"
+def generate_password():
+    password_strength = choice.get()
+    password_length = int(val.get())
 
-def get_password_length():
-    while True:
-        try:
-            pass_len = int(input("Enter Password Length: "))
-            if pass_len > 0:
-                return pass_len
-            else:
-                print("Please enter a positive integer for password length.")
-        except ValueError:
-            print("Please enter a valid integer for password length.")
+    if password_strength == 1:
+        characters = string.ascii_letters
+    elif password_strength == 2:
+        characters = string.ascii_letters + string.digits
+    else:
+        characters = string.ascii_letters + string.digits + string.punctuation
 
-def generate_password(length, array, is_alpha=False):
-    password = [random.choice(array) for _ in range(length)]
-    if is_alpha:
-        password = [random.choice([char.lower(), char.upper()]) for char in password]
-    return ''.join(password)
+    generated_password = ''.join(random.choice(characters) for _ in range(password_length))
+    result.config(text="Generated Password: " + generated_password)
 
-def main():
-    pass_len = get_password_length()
+root = Tk()
+root.title("Password Generator")
+root.geometry("400x250")
+root.configure(bg='lightgray')
 
-    alpha_len = pass_len // 2
-    num_len = math.ceil(pass_len * 30 / 100)
-    special_len = pass_len - (alpha_len + num_len)
+frame_strength = Frame(root, bg='blue')
+frame_strength.pack(pady=10)
 
-    alpha_password = generate_password(alpha_len, alpha, True)
-    num_password = generate_password(num_len, num)
-    special_password = generate_password(special_len, special)
+label_strength = Label(frame_strength, text="Select Password Strength", fg='white', bg='blue',
+                        font=('Helvetica', 12))
+label_strength.pack(pady=5)
 
-    final_password = ''.join(random.sample(alpha_password + num_password + special_password, pass_len))
-    
-    print(final_password)
+choice = IntVar()
+rb1 = Radiobutton(frame_strength, text="Weak (Letters Only)", variable=choice, value=1)
+rb2 = Radiobutton(frame_strength, text="Medium (Letters + Numbers)", variable=choice, value=2)
+rb3 = Radiobutton(frame_strength, text="Strong (Letters + Numbers + Symbols)", variable=choice, value=3)
+rb1.pack()
+rb2.pack()
+rb3.pack()
 
-if __name__ == "__main__":
-    main()
+frame_length = Frame(root, bg='red')
+frame_length.pack(pady=10)
 
+label_length = Label(frame_length, text="Enter Password Length", fg='white', bg='red',
+                     font=('Helvetica', 12))
+label_length.pack(pady=5)
+
+val = StringVar()
+password_length_entry = Entry(frame_length, textvariable=val)
+password_length_entry.pack(pady=5)
+
+generate_button = Button(root, text="Generate Password", command=generate_password, bg='green', fg='white',
+                         font=('Helvetica', 12))
+generate_button.pack(pady=10)
+
+result = Label(root, text="", font=('Helvetica', 12))
+result.pack()
+
+root.mainloop()
